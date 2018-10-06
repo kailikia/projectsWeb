@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+
+    <title>Projects App</title>
+  </head>
+  <body>
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+  <a href="/logout">Logout</a>
+    <h1>My Projects</h1>
+
+
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+          <table id="myTable" class="table">
+  <thead>
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Title</th>
+      <th scope="col">Type</th>
+      <th scope="col">Start Date</th>
+      <th scope="col">End Date</th>
+      <th scope="col">Amount</th>
+      <th scope="col">Description</th>
+      <th scope="col">Status</th>
+      <th scope="col">Action</th>
+      <th scope="col">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for any in projectsHtml %}
+    <td>
+      <th scope="row">{{ any.id}}</th>
+      <td>{{ any.title }}</td>
+      <td>{{ any.type }}</td>
+      <td>{{ any.start_from }}</td>
+      <td>{{ any.end_at }}</td>
+      <td>{{ any.amount }}</td>
+      <td>{{ any.description }}</td>
+      <td>{{ any.status }}</td>
+      <td>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal{{any.id}}">
+  Edit
+</button>
+      </td>
+    <td>
+      <a href="/delete/{{any.id}}" class="btn btn-danger">DELETE</a>
+    </td>
+
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+        </div>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+
+
+
+           <form method="post" action="/save">
+            <div class="form-group">
+              <label for="exampleFormControlInput1">Title</label>
+              <input type="text" class="form-control" id="exampleFormControlInput1" name="titleForm">
+            </div>
+            <div class="form-group">
+              <label for="exampleFormControlSelect1">Type</label>
+              <select class="form-control" id="exampleFormControlSelect1" name="typeForm">
+                <option>Internal</option>
+                <option>External</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="exampleFormControlInput1">Starting Date</label>
+              <input type="date" class="form-control" name="startDateForm">
+            </div>
+             <div class="form-group">
+              <label for="exampleFormControlInput1">Ending Date</label>
+              <input type="date" class="form-control" name="endDateForm">
+            </div>
+            <div class="form-group">
+              <label for="exampleFormControlInput1">Amount</label>
+              <input type="number" class="form-control" name="amountForm">
+            </div>
+
+            <div class="form-group">
+              <label for="exampleFormControlTextarea1">Description</label>
+              <textarea class="form-control" id="exampleFormControlTextarea1" name="descriptionForm" rows="3"></textarea>
+            </div>
+
+              <div class="form-group">
+                <button class="btn btn-default">Save Project</button>
+              </div>
+          </form>
+
+
+        </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-6">
+        <h2>My first chart</h2>
+        <div align="left">
+          <embed type="image/svg+xml" src={{graph_data|safe}} style='max-width:1000px'/>
+        </div>
+
+      </div>
+      <div class="col-lg-6">
+        <h2>My second chart</h2>
+          <div align="left">
+          <embed type="image/svg+xml" src={{pie_chart|safe}} style='max-width:1000px'/>
+        </div>
+      </div>
+    </div>
+
+{% for any in projectsHtml %}
+<!-- Modal -->
+<div class="modal fade" id="exampleModal{{any.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">{{ any.title}}</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+           <form method="post" action="/update/{{any.id}}">
+            <div class="form-group">
+              <label for="exampleFormControlInput1">Title</label>
+              <input type="text" value="{{any.title}}" class="form-control" id="exampleFormControlInput1" name="titleForm">
+            </div>
+            <div class="form-group">
+              <label for="exampleFormControlSelect1">Type</label>
+              <select class="form-control" id="exampleFormControlSelect1" name="typeForm">
+                <option {% if any.type =='Internal' %} selected {% endif %}>Internal</option>
+                <option {% if any.type =='External' %} selected {% endif %}>External</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="exampleFormControlInput1">Starting Date</label>
+              <input type="date" value="{{any.start_from}}" class="form-control" name="startDateForm">
+            </div>
+             <div class="form-group">
+              <label for="exampleFormControlInput1">Ending Date</label>
+              <input type="date" value="{{any.end_at}}" class="form-control" name="endDateForm">
+            </div>
+            <div class="form-group">
+              <label for="exampleFormControlInput1">Amount</label>
+              <input type="number" value="{{any.amount}}" class="form-control" name="amountForm">
+            </div>
+
+            <div class="form-group">
+              <label for="exampleFormControlTextarea1">Description</label>
+              <textarea class="form-control" id="exampleFormControlTextarea1" name="descriptionForm" rows="3">{{any.description}}</textarea>
+            </div>
+
+              <div class="form-group">
+                <button class="btn btn-default">Update Project</button>
+              </div>
+          </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+   <script type="text/javascript">
+     $(document).ready( function () {
+        $('#myTable').DataTable();
+      });
+   </script>
+
+  </body>
+</html>
